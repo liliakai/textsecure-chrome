@@ -14,13 +14,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-$('#inbox_link').click(function() {
-	$('#inbox').show();
+$('#inbox_link').click(function(e) {
 	$('#send').hide();
+  $('#send_link').removeClass('selected');
+	$('#inbox').show();
+  $('#inbox_link').addClass('selected');
 });
-$('#send_link').click(function() {
+$('#send_link').click(function(e) {
 	$('#inbox').hide();
+  $('#inbox_link').removeClass('selected');
 	$('#send').show();
+  $('#send_link').addClass('selected');
 });
 
 registerOnLoadFunction(function() {

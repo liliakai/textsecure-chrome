@@ -14,13 +14,16 @@
 
 <html>
 <head>
-<link type='text/css' rel='stylesheet' href='popup.css'>
+<link type='text/css' rel='stylesheet' href='css/forms.css'>
+<link type='text/css' rel='stylesheet' href='css/buttons.css'>
+<link type='text/css' rel='stylesheet' href='css/conversation.css'>
+<link type='text/css' rel='stylesheet' href='css/popup.css'>
 </head>
 <body data-name="curve25519" data-tools="pnacl" data-configs="Debug Release" data-path="pnacl/{config}">
 	<header class="clearfix">
 		<div class='container'>
-			<button id="inbox_link">Inbox</button>
-			<button id="send_link">Compose</button>
+      <button class='btn selected' id='inbox_link'><span>Inbox</span></button>
+      <button class='btn' id='send_link'><span>Compose</span></button>
 		</div>
 	</header>
 	<div class='container'>
@@ -40,10 +43,8 @@
 				<button id="popup_send_button">Send</button>
 			</form>
 		</div>
-	</div>
-	<div id="inbox">
-		<ul id="conversations">
-		</ul>
+    <div id="inbox">
+    </div>
 	</div>
 
 	<script type="text/javascript" src="js/webcrypto.js"></script>
