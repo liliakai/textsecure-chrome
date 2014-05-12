@@ -321,10 +321,20 @@ function storeMessage(messageObject) {
 		messageMap[messageObject.pushMessage.source] = conversation;
 	}
 
-	conversation[conversation.length] = { message:    messageObject.message.body != null && getString(messageObject.message.body),
-										sender:       messageObject.pushMessage.source,
-										timestamp:    messageObject.pushMessage.timestamp.div(dcodeIO.Long.fromNumber(1000)).toNumber() };
+    var message = messageObject.message.body != null && getString(messageObject.message.body);
+	conversation[conversation.length] = {
+		message:   message,
+		sender:    messageObject.pushMessage.source,
+		timestamp: messageObject.pushMessage.timestamp.div(dcodeIO.Long.fromNumber(1000)).toNumber() };
 	storage.putEncrypted("messageMap", messageMap);
+	Whisper.Messages.add({
+		sender: conversation.sender,
+		group: conversation.group,
+		threadId: i,
+		body: conversation.message,
+		type: 'incoming',
+		timestamp: message.timestamp
+	}).save();
 	chrome.runtime.sendMessage(conversation[conversation.length - 1]);
 }
 
