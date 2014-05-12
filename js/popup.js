@@ -31,68 +31,10 @@ registerOnLoadFunction(function() {
 	if (storage.getUnencrypted("number_id") === undefined) {
 		chrome.tabs.create({url: "options.html"});
 	} else {
-		function fillMessages() {
-			var MAX_MESSAGES_PER_CONVERSATION = 4;
-			var MAX_CONVERSATIONS = 5;
-
-			var conversations = [];
-
-			var messageMap = getMessageMap();
-			for (conversation in messageMap) {
-				var messages = messageMap[conversation];
-				messages.sort(function(a, b) { return b.timestamp - a.timestamp; });
-				conversations[conversations.length] = messages;
-			}
-
-			conversations.sort(function(a, b) { return b[0].timestamp - a[0].timestamp });
-
-			var ul = $('#conversations');
-			ul.html('');
-			for (var i = 0; i < MAX_CONVERSATIONS && i < conversations.length; i++) {
-				var conversation = conversations[i];
-				var messages = $('<ul class="conversation">');
-				for (var j = 0; j < MAX_MESSAGES_PER_CONVERSATION && j < conversation.length; j++) {
-					var message = conversation[j];
-					$('<li class="message incoming container">').
-						append($('<div class="avatar">')).
-						append($('<div class="bubble">').
-							append($('<span class="message-text">').text(message.message)).
-							append($('<span class="metadata">').text("From: " + message.sender + ", at: " + timestampToHumanReadable(message.timestamp)))
-						).appendTo(messages);
-				}
-				var button = $('<button id="button' + i + '">').text('Send');
-				var input = $('<input id="text' + i + '">');
-				$('<li>').
-					append(messages).
-					append($("<form class='container'>").append(input).append(button)).
-					appendTo(ul);
-				button.click(function() {
-					button.attr("disabled", "disabled");
-					button.text("Sending");
-
-					var sendDestinations = [conversation[0].sender];
-					if (conversation[0].group)
-						sendDestinations = conversation[0].group.members;
-
-					var messageProto = new PushMessageContentProtobuf();
-					messageProto.body = input.val();
-
-					sendMessageToNumbers(sendDestinations, messageProto, function(result) {
-						console.log(result);
-						button.removeAttr("disabled");
-						button.text("Send");
-						input.val("");
-					});
-				});
-			}
-		}
-
 		$(window).bind('storage', function(e) {
-			console.log("Got localStorage update for key " + e.key);
-			if (event.key == "emessageMap")//TODO: Fix when we get actual encryption
-				fillMessages();
+      Whisper.Messages.fetch();
 		});
-		fillMessages();
+    Whisper.Messages.fetch();
 		$('.my-number').text(storage.getUnencrypted("number_id").split(".")[0]);
 		storage.putUnencrypted("unreadCount", 0);
 		chrome.browserAction.setBadgeText({text: ""});
