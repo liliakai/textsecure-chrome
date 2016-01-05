@@ -1,6 +1,10 @@
 /*
  * vim: ts=4:sw=4:expandtab
  */
+const electron = require('electron');
+const app = electron.app;  // Module to control application life.
+const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
+
 
 ;(function() {
     'use strict';
@@ -65,7 +69,7 @@
         return accountManager;
     };
 
-
+    app.on('ready', function() {
     storage.fetch();
     storage.onready(function() {
         window.dispatchEvent(new Event('storage_ready'));
@@ -89,6 +93,7 @@
 
         RotateSignedPreKeyListener.init();
         ExpiringMessagesListener.update();
+    });
     });
 
     window.getSyncRequest = function() {
