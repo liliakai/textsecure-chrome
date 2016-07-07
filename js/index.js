@@ -5,16 +5,6 @@
 (function () {
     'use strict';
 
-    function logError(error) {
-        extension.windows.getBackground(function(bg) {
-            bg.console.log('index.html: ', error);
-        });
-    }
-
-    window.onerror = function(message, script, line, col, error) {
-        logError(error);
-    };
-
     var view;
 
     function render() {

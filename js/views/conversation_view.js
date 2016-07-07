@@ -340,6 +340,7 @@
 
         sendMessage: function(e) {
             var toast;
+            e.preventDefault();
             if (extension.expired()) {
                 toast = new Whisper.ExpiredToast();
                 toast.$el.insertAfter(this.$el);
@@ -352,7 +353,6 @@
                 toast.render();
                 return;
             }
-            e.preventDefault();
             var input = this.$messageField;
             var message = this.replace_colons(input.val()).trim();
             var convo = this.model;

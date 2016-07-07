@@ -1,10 +1,6 @@
 /*
  * vim: ts=4:sw=4:expandtab
  */
-const electron = require('electron');
-const app = electron.app;  // Module to control application life.
-const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
-
 
 ;(function() {
     'use strict';
@@ -14,6 +10,26 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
 
     console.log('background page reloaded');
     extension.notification.init();
+/*
+    // register some chrome listeners
+    if (chrome.notifications) {
+        chrome.notifications.onClicked.addListener(function() {
+            extension.notification.clear();
+            Whisper.Notifications.onclick();
+        });
+        chrome.notifications.onButtonClicked.addListener(function() {
+            extension.notification.clear();
+            Whisper.Notifications.clear();
+            getInboxCollection().each(function(model) {
+                model.markRead();
+            });
+        });
+        chrome.notifications.onClosed.addListener(function(id, byUser) {
+            if (byUser) {
+                Whisper.Notifications.clear();
+            }
+        });
+    }
 
     // Close and reopen existing windows
     var open = false;
@@ -21,9 +37,9 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
         open = true;
         appWindow.close();
     });
-
+*/
     // start a background worker for ecc
-    textsecure.startWorker('/js/libsignal-protocol-worker.js');
+    textsecure.startWorker('js/libsignal-protocol-worker.js');
 
     extension.onLaunched(function() {
         console.log('extension launched');
@@ -39,6 +55,7 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
 
     var SERVER_URL = 'https://textsecure-service-staging.whispersystems.org';
     var SERVER_PORTS = [80, 4433, 8443];
+    var SERVER_URL = require('electron').remote.getGlobal('SERVER_URL');
     var ATTACHMENT_SERVER_URL = 'https://whispersystems-textsecure-attachments-staging.s3.amazonaws.com';
     var messageReceiver;
     window.getSocketStatus = function() {
@@ -69,7 +86,6 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
         return accountManager;
     };
 
-    app.on('ready', function() {
     storage.fetch();
     storage.onready(function() {
         window.dispatchEvent(new Event('storage_ready'));
@@ -93,7 +109,6 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
 
         RotateSignedPreKeyListener.init();
         ExpiringMessagesListener.update();
-    });
     });
 
     window.getSyncRequest = function() {

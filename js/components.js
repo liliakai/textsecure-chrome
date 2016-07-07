@@ -1,3 +1,5 @@
+delete window.exports;
+delete window.module;
 /*!
  * jQuery JavaScript Library v2.1.1-pre
  * http://jquery.com/

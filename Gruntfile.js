@@ -19,6 +19,9 @@ module.exports = function(grunt) {
       components: {
         src: components,
         dest: 'js/components.js',
+        options: {
+          banner: "delete window.exports;\ndelete window.module;\n",
+        },
       },
       libtextsecurecomponents: {
         src: libtextsecurecomponents,
@@ -99,6 +102,7 @@ module.exports = function(grunt) {
     dist: {
       src: [
         'manifest.json',
+        'main.js',
         'background.html',
         'index.html',
         'conversation.html',
@@ -123,7 +127,8 @@ module.exports = function(grunt) {
         files: [{ expand: true, dest: 'dist/', src: ['<%= dist.src %>'] }],
         options: {
           process: function(content, srcpath) {
-            if (srcpath.match('background.js')) {
+            if (srcpath.match('background.js') ||
+                srcpath.match('main.js')) {
               return content.replace(
                 /textsecure-service-staging.whispersystems.org/g,
                 'textsecure-service-ca.whispersystems.org').replace(
