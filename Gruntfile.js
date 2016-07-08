@@ -105,7 +105,6 @@ module.exports = function(grunt) {
         'main.js',
         'background.html',
         'index.html',
-        'conversation.html',
         'options.html',
         '_locales/**',
         'protos/*',
