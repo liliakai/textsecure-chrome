@@ -1,5 +1,8 @@
 {
   "name": "signal-desktop",
+  "description": "Privacy is possible. Signal makes it easy.",
+  "author": "Open Whisper Systems <support@whispersystems.org>",
+  "license": "GPL-3.0",
   "repository": "https://github.com/WhisperSystems/Signal-Desktop.git",
   "main": "main.js",
   "version": "0.1.7",
