@@ -1,7 +1,9 @@
 {
   "name": "signal-desktop",
+  "description": "Private messaging from your desktop",
   "repository": "https://github.com/WhisperSystems/Signal-Desktop.git",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": "Open Whisper Systems",
   "main": "main.js",
   "devDependencies": {
     "bower": "^1.3.12",
