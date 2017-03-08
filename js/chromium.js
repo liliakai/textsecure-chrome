@@ -19,7 +19,7 @@
         self.tabs = tabs;
 
         self.setBadgeText = function (text) {
-            if (chrome.browserAction && chrome.browserAction.setBadgeText) {
+            if (window.chrome && chrome.browserAction && chrome.browserAction.setBadgeText) {
                 chrome.browserAction.setBadgeText({text: String(text)});
             }
         };
@@ -89,7 +89,11 @@
         },
 
         getAll: function() {
-            return chrome.app.window.getAll();
+                  if (window.chrome) {
+                    return chrome.app.window.getAll();
+                  } else {
+                    return [];
+                  }
         },
 
         getViews: function() {
@@ -142,10 +146,10 @@
     };
 
     extension.onLaunched = function(callback) {
-        if (chrome.browserAction && chrome.browserAction.onClicked) {
+        if (window.chrome && chrome.browserAction && chrome.browserAction.onClicked) {
             chrome.browserAction.onClicked.addListener(callback);
         }
-        if (chrome.app && chrome.app.runtime) {
+        if (window.chrome && chrome.app && chrome.app.runtime) {
             chrome.app.runtime.onLaunched.addListener(callback);
         }
     };
@@ -185,7 +189,7 @@
     extension.notification = {
         init: function() {
             // register some chrome listeners
-            if (chrome.notifications) {
+            if (window.chrome && chrome.notifications) {
                 chrome.notifications.onClicked.addListener(function() {
                     extension.notification.clear();
                     Whisper.Notifications.onclick();
@@ -255,7 +259,7 @@
         }
     };
 
-    if (chrome.runtime.onInstalled) {
+    if (window.chrome && chrome.runtime.onInstalled) {
         chrome.runtime.onInstalled.addListener(function(options) {
             if (options.reason === 'install') {
                 console.log('new install');
