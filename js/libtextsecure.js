@@ -36693,7 +36693,24 @@ Internal.SessionLock.queueJobForNumber = function queueJobForNumber(number, runJ
     var encrypt      = libsignal.crypto.encrypt;
     var decrypt      = libsignal.crypto.decrypt;
     var calculateMAC = libsignal.crypto.calculateMAC;
-    var verifyMAC    = libsignal.crypto.verifyMAC;
+
+    var verifyMAC    = function(ivAndCiphertext, mac_key, mac, len, theirDigest) {
+        libsignal.crypto.verifyMAC(ivAndCiphertext, mac_key, mac, len).then(function() {
+          if (theirDigest) {
+              return crypto.subtle.digest({name: 'SHA-256'}, ivAndCiphertext).then(function(ourDigest) {
+                  var a = new Uint8Array(ourDigest);
+                  var b = new Uint8Array(theirDigest);
+                  var result = 0;
+                  for (var i=0; i < mac.byteLength; ++i) {
+                      result = result | (a[i] ^ b[i]);
+                  }
+                  if (result !== 0) {
+                    throw new Error('Bad digest');
+                  }
+              });
+          }
+        });
+    };
 
     window.textsecure = window.textsecure || {};
     window.textsecure.crypto = {
@@ -36724,7 +36741,7 @@ Internal.SessionLock.queueJobForNumber = function queueJobForNumber(number, runJ
             });
         },
 
-        decryptAttachment: function(encryptedBin, keys) {
+        decryptAttachment: function(encryptedBin, keys, theirDigest) {
             if (keys.byteLength != 64) {
                 throw new Error("Got invalid length attachment keys");
             }
@@ -36740,7 +36757,7 @@ Internal.SessionLock.queueJobForNumber = function queueJobForNumber(number, runJ
             var ivAndCiphertext = encryptedBin.slice(0, encryptedBin.byteLength - 32);
             var mac = encryptedBin.slice(encryptedBin.byteLength - 32, encryptedBin.byteLength);
 
-            return verifyMAC(ivAndCiphertext, mac_key, mac, 32).then(function() {
+            return verifyMAC(ivAndCiphertext, mac_key, mac, 32, theirDigest).then(function() {
                 return decrypt(aes_key, ciphertext, iv);
             });
         },
@@ -38539,10 +38556,12 @@ MessageReceiver.prototype.extend({
         return textsecure.storage.get('blocked', []).indexOf(number) >= 0;
     },
     handleAttachment: function(attachment) {
+        var digest = attachment.digest ? attachment.digest.toArrayBuffer() : undefined;
         function decryptAttachment(encrypted) {
             return textsecure.crypto.decryptAttachment(
                 encrypted,
-                attachment.key.toArrayBuffer()
+                attachment.key.toArrayBuffer(),
+                attachment.digest.toArrayBuffer()
             );
         }
 
