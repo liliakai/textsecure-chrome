@@ -19,7 +19,7 @@
     });
 
     // start a background worker for ecc
-    textsecure.startWorker('/js/libsignal-protocol-worker.js');
+    textsecure.startWorker('js/libsignal-protocol-worker.js');
     textsecure.storage.protocol.on('keychange', function(id) {
         var conversation = ConversationController.add({id: id});
         conversation.fetch().then(function() {
