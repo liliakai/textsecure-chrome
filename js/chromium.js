@@ -39,11 +39,11 @@
         },
 
         focus: function(id, callback) {
-            if (chrome.windows) {
+            if (window.chrome && chrome.windows) {
                 chrome.windows.update(id, { focused: true }, function() {
                     callback(chrome.runtime.lastError);
                 });
-            } else if (chrome.app.window) {
+            } else if (window.chrome && chrome.app.window) {
                 var appWindow = chrome.app.window.get(id);
                 if (appWindow) {
                     appWindow.show();
@@ -73,13 +73,13 @@
 
         getBackground: function(callback) {
             var getBackground;
-            if (chrome.extension) {
+            if (window.chrome && chrome.extension) {
                 var bg = chrome.extension.getBackgroundPage();
                 bg.storage.onready(function() {
                     callback(bg);
                     resolve();
                 });
-            } else if (chrome.runtime) {
+            } else if (window.chrome && chrome.runtime) {
                 chrome.runtime.getBackgroundPage(function(bg) {
                     bg.storage.onready(function() {
                         callback(bg);
