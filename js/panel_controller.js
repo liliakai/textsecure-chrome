@@ -31,44 +31,21 @@
     var inboxOpened = false;
     var inboxWindowId = 'inbox';
     var appWindow = null;
+    var view;
     window.openInbox = function() {
         console.log('open inbox');
         if (inboxOpened === false) {
             inboxOpened = true;
-            extension.windows.open({
-                id: 'inbox',
-                url: 'index.html',
-                focused: true,
-                width: 580,
-                height: 440,
-                minWidth: 600,
-                minHeight: 360
-            }, function (windowInfo) {
-                appWindow = windowInfo;
-                inboxWindowId = appWindow.id;
-
-                appWindow.contentWindow.addEventListener('load', function() {
-                    setUnreadCount(storage.get("unreadCount", 0));
-                });
-
-                appWindow.onClosed.addListener(function () {
-                    inboxOpened = false;
-                    appWindow = null;
-                });
-
-                appWindow.contentWindow.addEventListener('blur', function() {
-                    inboxFocused = false;
-                });
-                appWindow.contentWindow.addEventListener('focus', function() {
-                    inboxFocused = true;
-                    clearAttention();
-                });
-
-                // close the inbox if background.html is refreshed
-                extension.windows.onSuspend(function() {
-                    // TODO: reattach after reload instead of closing.
-                    extension.windows.remove(inboxWindowId);
-                });
+            ConversationController.updateInbox().then(function() {
+                try {
+                    if (view) { view.remove(); }
+                    var $body = $('body',document).empty();
+                    view = new Whisper.InboxView({window: window});
+                    view.$el.prependTo($body);
+                    openConversation(getOpenConversation());
+                } catch (e) {
+                    logError(e);
+                }
             });
         } else if (inboxOpened === true) {
             extension.windows.focus(inboxWindowId, function (error) {
@@ -97,7 +74,9 @@
     var open;
     window.openConversation = function(conversation) {
         if (inboxOpened === true) {
-            appWindow.contentWindow.openConversation(conversation);
+            if (conversation) {
+                view.openConversation(null, conversation);
+            }
         } else {
             open = conversation;
         }
