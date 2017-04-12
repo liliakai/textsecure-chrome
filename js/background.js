@@ -66,16 +66,9 @@
         return accountManager;
     };
 
-
     storage.fetch();
     storage.onready(function() {
         window.dispatchEvent(new Event('storage_ready'));
-        setUnreadCount(storage.get("unreadCount", 0));
-
-        if (Whisper.Registration.isDone()) {
-            extension.keepAwake();
-            init();
-        }
 
         console.log("listening for registration events");
         Whisper.events.on('registration_done', function() {
@@ -83,6 +76,8 @@
             extension.keepAwake();
             init(true);
         });
+
+        var appView = new Whisper.AppView({el: $('body'), events: Whisper.events});
 
         if (open) {
             openInbox();
@@ -93,11 +88,19 @@
         Whisper.ExpiringMessagesListener.init(Whisper.events);
 
         if (Whisper.Registration.everDone()) {
-            openInbox();
+            init();
+            appView.openInbox();
+        } else {
+            appView.openInstaller();
         }
-        if (!Whisper.Registration.isDone()) {
-            extension.install();
-        }
+
+        Whisper.events.on('unauthorized', function() {
+            appView.inboxView.networkStatusView.update();
+        });
+        Whisper.events.on('reconnectTimer', function() {
+            appView.inboxView.networkStatusView.setSocketReconnectInterval(60000);
+        });
+
     });
 
     window.getSyncRequest = function() {
@@ -106,7 +109,6 @@
 
     function init(firstRun) {
         window.removeEventListener('online', init);
-        if (!Whisper.Registration.isDone()) { return; }
 
         if (messageReceiver) { messageReceiver.close(); }
 
@@ -232,7 +234,6 @@
         if (e.name === 'HTTPError' && (e.code == 401 || e.code == 403)) {
             Whisper.Registration.remove();
             Whisper.events.trigger('unauthorized');
-            extension.install();
             return;
         }
 
@@ -307,42 +308,5 @@
             timestamp: timestamp, source: pushMessage.source
         });
     }
-
-    window.owsDesktopApp = {
-        getAppView: function(destWindow) {
-
-            var self = this;
-
-            return ConversationController.updateInbox().then(function() {
-                try {
-                    if (self.inboxView) { self.inboxView.remove(); }
-                    self.inboxView = new Whisper.InboxView({model: self, window: destWindow});
-                    self.openConversation(getOpenConversation());
-
-                    return self.inboxView;
-
-                } catch (e) {
-                    console.log(e);
-                }
-            });
-        },
-        openConversation: function(conversation) {
-            if (this.inboxView && conversation) {
-                this.inboxView.openConversation(null, conversation);
-            }
-        }
-    };
-
-    Whisper.events.on('unauthorized', function() {
-        if (owsDesktopApp.inboxView) {
-            owsDesktopApp.inboxView.networkStatusView.update();
-        }
-    });
-    Whisper.events.on('reconnectTimer', function() {
-        if (owsDesktopApp.inboxView) {
-            owsDesktopApp.inboxView.networkStatusView.setSocketReconnectInterval(60000);
-        }
-    });
-
 
 })();
