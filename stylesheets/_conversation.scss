@@ -499,7 +499,7 @@ li.entry .error-icon-container {
           display: inline-block;
           width: $button-height * 2;
           height: $button-height * 2;
-          @include color-svg('/images/file.svg', black);
+          @include color-svg('../images/file.svg', black);
         }
       }
     }
