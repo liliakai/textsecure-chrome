@@ -1342,7 +1342,7 @@ li.entry .error-icon-container {
         display: inline-block;
         width: 24px;
         height: 24px;
-        -webkit-mask: url("/images/file.svg") no-repeat center;
+        -webkit-mask: url("../images/file.svg") no-repeat center;
         -webkit-mask-size: 100%;
         background-color: black; }
   .message-container .outgoing .avatar,
