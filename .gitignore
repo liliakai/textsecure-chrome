@@ -6,3 +6,4 @@ dist
 .tx
 config/local.json
 config/local-*.json
+.DS_Store
