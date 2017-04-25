@@ -90,13 +90,12 @@
             appView.inboxView.networkStatusView.setSocketReconnectInterval(60000);
         });
 
-        [
-          'openInbox',
-          'openInstaller',
-          'openConversation',
-          'openStandalone'
-        ].forEach(function(eventName) {
-          appView.listenTo(Whisper.events, eventName, appView[eventName]);
+        Whisper.Notifications.on('click', function(conversation) {
+            if (conversation) {
+              appView.openConversation(conversation);
+            } else {
+              appView.openInbox();
+            }
         });
     });
 
