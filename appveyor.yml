@@ -18,12 +18,14 @@ test_script:
   - ./node_modules/.bin/grunt test-release:win
   - yarn test
 
-artifacts:
-  - path: dist/*.*
-
 environment:
   SIGNAL_ENV: production
 
 deploy:
-  provider: Environment
-  name: signal-desktop-builds
+  provider: S3
+  access_key_id: AKIAJR7OQ5SVTFKPPLXQ
+  secret_access_key: xl6I4z5jgUDdwG6MLTM3Kn1N1QpVKZvFrR72HTZbvh8yxyHfGX/aDxCHk/QCALXz
+  bucket: signal-desktop-builds
+  region: us-west-1
+  folder: '%APPVEYOR_REPO_NAME%/%APPVEYOR_REPO_COMMIT%'
+  artifact: dist/*.*

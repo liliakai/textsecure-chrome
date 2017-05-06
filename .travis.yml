@@ -18,7 +18,15 @@ env:
     - secure: LeXDynRSyeHXR9KdmhYuP/zsc8uFsnYoOWI3fqg8x5SLOilfDyQ766idkT9NTRrdSR8WY7wP4DPs3hrBWGmcVq7BhytI9Q34YSgGS/Sds0jlm5AzSpYfAHpSQ+9ufQXNKN6lgxTkupdsWlc2Em20wUd5EfluDSOoeWVMlqHmKrw=
     - secure: WzXjaiy6BmEyKI3uXeanjbAlmzadlwIWxJbC7Mff2duIl/nsaOTK6ElYu23IfeBCvK1DxXV8DVUfTIZXkeFeqHKPtgq2t3HcS12YiNnb7ToGpgOpzElYY4wAOPxRbqPE/ZcthbSxo1x/thgDeWNWxqK1X4XJ3qEIRoE+tPsGKG8=
 sudo: false
-addons:
-  artifacts:
-    paths:
-      - $(ls ./dist/*.* | tr "\n" ":")
+deploy:
+  provider: s3
+  access_key_id: AKIAJR7OQ5SVTFKPPLXQ
+  secret_access_key:
+    secure: r1xSV/wmnFRAioO7Z1MfgRlvd6PbpeCGKysPLEEj3JBJEfZhBHy+fZ1NGaPYcfsNHT0xD0mxmub//tqOtvt7gYK21ocs4HpJU5Xp4PHr5U08HMI8qQQefOE1gd1TG21eNi+1vlJMq+EHHdzAxFwPWw/oz9SKeRU0Np8gMd+vv5M=
+  bucket: signal-desktop-builds
+  region: us-west-1
+  upload_dir: $TRAVIS_REPO_SLUG/$TRAVIS_COMMIT
+  local_dir: dist/*.*
+  skip_cleanup: true
+  on:
+    all_branches: true
