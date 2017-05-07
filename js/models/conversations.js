@@ -46,7 +46,6 @@
 
         this.on('change:avatar', this.updateAvatarUrl);
         this.on('destroy', this.revokeAvatarUrl);
-        this.on('read', this.onReadMessage);
     },
 
     addKeyChange: function(id) {
