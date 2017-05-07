@@ -20,6 +20,19 @@
 
     // start a background worker for ecc
     textsecure.startWorker('/js/libsignal-protocol-worker.js');
+    textsecure.storage.protocol.on('keychange', function(id) {
+        var conversation = ConversationController.add({id: id});
+        conversation.fetch().then(function() {
+          conversation.addKeyChange(id);
+        });
+        var groups = new Whisper.GroupCollection();
+        return groups.fetchGroups(id).then(function() {
+          groups.each(function(conversation) {
+            conversation = ConversationController.add(conversation);
+            conversation.addKeyChange(id);
+          });
+        });
+    }.bind(this));
 
     extension.onLaunched(function() {
         console.log('extension launched');
