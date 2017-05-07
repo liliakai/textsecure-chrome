@@ -26,7 +26,12 @@ deploy:
   bucket: signal-desktop-builds
   region: us-west-1
   upload_dir: $TRAVIS_REPO_SLUG/$TRAVIS_COMMIT
-  local_dir: dist/*.*
+  local_dir: dist
   skip_cleanup: true
   on:
     all_branches: true
+
+addons:
+  artifacts:
+    paths:
+      - $(ls ./dist/*.* | tr "\n" ":")
