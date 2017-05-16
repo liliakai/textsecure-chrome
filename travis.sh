@@ -5,6 +5,5 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
   sh -e /etc/init.d/xvfb start
   sleep 3
 fi
-grunt test-release:$TRAVIS_OS_NAME
 grunt unit-tests
 
