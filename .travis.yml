@@ -2,14 +2,13 @@ language: node_js
 node_js:
   - 'node'
 os:
-  - linux
   - osx
 dist: trusty
 install:
   - yarn install
 script:
   - yarn run generate
-  - ./node_modules/.bin/build --em.environment=$SIGNAL_ENV --config.mac.bundleVersion='$TRAVIS_BUILD_NUMBER' --publish=never
+  - ./node_modules/.bin/build --em.environment=$SIGNAL_ENV --config.mac.bundleVersion='$TRAVIS_BUILD_NUMBER' --publish=never -mlw
   - ./travis.sh
 env:
   global:
